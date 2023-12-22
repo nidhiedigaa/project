@@ -8,15 +8,16 @@ const nodemailer=require('nodemailer')
 const jwt=require('jsonwebtoken')
 const upload=require('./multer')
 const product_collection=require('../mongo/user')
-const route=require('./productserver')
+const product_route=require('./productserver')
 const path=require('path')
-
+const order_route=require('./orderserver')
 
 
 const app=express()
 app.use(parser.urlencoded({extended:true}))
 app.use(parser.json())
-app.use(route)
+app.use(product_route)
+app.use(order_route)
 app.use('/uploads',express.static('./uploads'))
 
 app.get('/',(req,res)=>

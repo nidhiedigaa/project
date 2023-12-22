@@ -6,24 +6,29 @@ const upload=require('./multer')
 
 
 
-const app=express()
-app.use(parser.urlencoded({extended:true}))
-app.use(parser.json())
+// const app=express()
+// app.use(parser.urlencoded({extended:true}))
+// app.use(parser.json())
 
-const route=express.Router()
-
-
+const product_route=express.Router()
 
 
 
-route.post('/add-products',upload.single('file'),async(req,res)=>
+
+
+product_route.post('/add-products',upload.single('file'),async(req,res)=>
 {
     const{name,description,price,quantity,category}=req.body
-    console.log(req.file)
-     const uploadedFileName = req.file.filename;
+    const imageUrl=''
+    if(req.file)
+    {
+      const uploadedFileName = req.file.filename
+      imageUrl = `http://localhost:${process.env.PORT}/uploads/${uploadedFileName}`;
+    }
+    
 
     // Construct the URL
-    const imageUrl = `http://localhost:${process.env.PORT}/uploads/${uploadedFileName}`;
+   
   if(name && description && price && quantity && category)
   {
     try
@@ -42,5 +47,5 @@ route.post('/add-products',upload.single('file'),async(req,res)=>
   }
 })
 
-module.exports=route
+module.exports=product_route
 
