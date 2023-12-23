@@ -11,13 +11,15 @@ const product_collection=require('../mongo/user')
 const product_route=require('./productserver')
 const path=require('path')
 const order_route=require('./orderserver')
-
-
+const vendors_collection=require('../mongo/vendor')
+const buyers_collection=require('../mongo/buyer')
+const cart_item_route=require('./cartitem')
 const app=express()
 app.use(parser.urlencoded({extended:true}))
 app.use(parser.json())
 app.use(product_route)
 app.use(order_route)
+app.use(cart_item_route)
 app.use('/uploads',express.static('./uploads'))
 
 app.get('/',(req,res)=>
@@ -27,9 +29,9 @@ app.get('/',(req,res)=>
 
 app.post('/register',async(req,res)=>
 {
-    const{name,email,password}=req.body
-    console.log(name,email,password)
-    if(name && email && password)
+    const{name,email,password,role}=req.body
+    console.log(name,email,password,role)
+    if(name && email && password && role)
     {
         try
         {
@@ -44,9 +46,29 @@ app.post('/register',async(req,res)=>
                 const verificationToken=randomstring.generate()
                 
                 const hashedPassword=await bcrypt.hash(password,10)
-               
-                const insertedValue=await user_collection.create({name:name,password:hashedPassword,email:email,token:verificationToken})
-               
+               console.log(hashedPassword)
+                if(role=='vendor')
+                {
+                    const insertedValue=await user_collection.create({name:name,password:hashedPassword,email:email,token:verificationToken,role:role})
+                    const vendorValue=await vendors_collection.create({details:insertedValue._id})
+                    const updatedValue=await user_collection.updateOne({_id:insertedValue._id},{$set:{vendor:vendorValue._id}})
+                  
+                }
+                else if(role=='buyer')
+                {
+                    console.log('hey buyer')
+                    const insertedValue=await user_collection.create({name:name,password:hashedPassword,email:email,token:verificationToken,role:role})
+                    console.log(insertedValue)
+                    const check=await buyers_collection.find()
+                    console.log(check)
+                    const buyerValue=await buyers_collection.create({details:insertedValue._id})
+                    console.log(buyerValue)
+                    const updatedValue=await user_collection.updateOne({_id:insertedValue._id},{$set:{buyer:buyerValue._id}})
+                    
+                 
+                    console.log(updatedValue)
+                }
+            
                 const transporter=nodemailer.createTransport( {
                     host: 'smtp.gmail.com',
                       port: 587,

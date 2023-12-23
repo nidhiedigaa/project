@@ -15,7 +15,9 @@ const userSchema=new mongoose.Schema(
         password:{type:String,required:true},
         token:{type:String,default:''},
         isVerified:{type:Boolean,default:false},
-        address: { type: mongoose.Schema.Types.ObjectId, ref: 'address' }
+        role:{type:String,required:true},
+        vendor:{type:mongoose.Schema.Types.ObjectId,ref:'vendors'},
+        buyer:{type:mongoose.Schema.Types.ObjectId,ref:'buyers'}
     }
 ,{timestamps:true})
 
@@ -27,7 +29,10 @@ const productSchema=new mongoose.Schema(
         price:{type:Number,required:true,min:0},
         quantity:{type:Number,required:true,min:0},
         category:{type:String,required:true,trim:true},
-        image:{type:String,trim:true}
+        image:{type:String,trim:true},
+        vendor:{type:mongoose.Schema.Types.ObjectId,ref:'vendors'},
+        category:{main:{type:String,required:true},sub:{type:String,required:true}},
+        orders:[{type:mongoose.Schema.Types.ObjectId,ref:'orders'}]
     }
 ,{timestamps:true})
 
@@ -74,11 +79,7 @@ const addressSchema = new mongoose.Schema({
     country: String
   });
 
-  const vendorSchema = new mongoose.Schema({
-    name: { type: String, required: true },
-    email: { type: String, required: true },
-  
-  }, { timestamps: true });
+ 
   
  
   
@@ -115,6 +116,6 @@ const product_collection=new mongoose.model('products',productSchema)
 const order_collection=new mongoose.model('orders',orderSchema)
 const address_collection=new mongoose.model('address',addressSchema)
 const cart_collection = new mongoose.model('carts', cartSchema);
-const vendor_collection = new mongoose.model('vendors', vendorSchema);
 
-module.exports={user_collection,product_collection,order_collection,address_collection,vendor_collection,cart_collection}
+
+module.exports={user_collection,product_collection,order_collection,address_collection,cart_collection,mongoose}
