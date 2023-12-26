@@ -5,13 +5,17 @@ const mongoose=require('./connection')
 const cart_item_schema=new mongoose.Schema({
     item:{type:mongoose.Schema.Types.ObjectId,ref:'product'},
     quantity:{type:Number,required:true},
+    buyer_id:String,
     total:{type:Number,required:true}
+    
 })
 
 
 const cart_schema=new mongoose.Schema({
     items:[{type:mongoose.Schema.Types.ObjectId,ref:'cartitem'}],
+    buyer:String,
     total:{type:Number,required:true}
+    
 })
 
 const cart_item_collection=new mongoose.model('cartitem',cart_item_schema)

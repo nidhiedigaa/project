@@ -5,7 +5,8 @@ const mongoose=require('./connection')
 const buyer_schema=new mongoose.Schema({
     details:{type:mongoose.Schema.Types.ObjectId,ref:'user'},
     address:[{type:mongoose.Schema.Types.ObjectId,ref:'address'}],
-    orders:[{type:mongoose.Schema.Types.ObjectId,ref:'order'}]
+    orders:[{type:mongoose.Schema.Types.ObjectId,ref:'order'}],
+    cart:{type:mongoose.Schema.Types.ObjectId,ref:'cart'}
 })
 
 

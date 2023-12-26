@@ -39,6 +39,26 @@ product_route.post('/add-products',upload.single('file'),async(req,res)=>
     }
 })
 
+product_route.get('/products',async(req,res)=>
+{
+    try
+    {
+        const products=await product_collection.find()
+        if(products.length!=0)
+        {
+            return res.status(200).json(products)
+        }
+        else
+        {
+            return res.status(400).send('empty products')
+        }
+    }
+    catch(error)
+    {
+        return res.status(500).send('server error')
+    }
+})
+
 
 module.exports=product_route
 
