@@ -20,12 +20,12 @@ cart_item_route.post('/add-item',async(req,res)=>
             {
                 if(quantity<=(checkProduct.quantity-checkCart.quantity))
                 {
-                    const updateCart=await cart_item_collection.updateOne({item:product_id},{$inc:{quantity:quantity},$set:{total:(checkCart.total)+(quantity*checkProduct.price)}})
-                    return res.status(200).send('item added to cart')
+                    const updateCart=await cart_item_collection.findOneAndUpdate({item:product_id},{$inc:{quantity:quantity},$set:{total:(checkCart.total)+(quantity*checkProduct.price)}},{new:true})
+                    return res.status(200).json({message:'item added to cart',cart_id:checkCart._id,price:updateCart.total})
                 }
                 else
                 {
-                    return res.status(200).send('item sold out')
+                    return res.status(400).send('item sold out')
                 }
             }
             else if(quantity<=checkProduct.quantity)
@@ -34,11 +34,11 @@ cart_item_route.post('/add-item',async(req,res)=>
                 console.log(addCart)
                 const checkCart=await cart_item_collection.findOne({item:product_id})
                 console.log(checkCart)
-                return res.status(200).send('item added to cart')
+                return res.status(200).json({message:'item added to cart',cart_id:addCart._id,price:addCart.total})
             }
             else
             {
-                return res.status(200).send('item sold out')
+                return res.status(400).send('item sold out')
             }
         }
         else
@@ -56,11 +56,13 @@ cart_item_route.post('/add-item',async(req,res)=>
 cart_route.post('/cart',async(req,res)=>
 {
     const{items}=req.body
+    console.log(req.body)
     try
     {
         let item=[]
         for(let i =0;i<items.length;i++)
         {
+            console.log(items[i])
             let data=await cart_item_collection.findOne({_id:items[i]})
             if(data)
             {

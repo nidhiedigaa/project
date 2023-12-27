@@ -16,7 +16,7 @@ const app=express()
 
 
 
-const corsOptions={origin:'http://127.0.0.1:5500'}
+const corsOptions={origin:'http://localhost:3000'}
 app.use(parser.urlencoded({extended:true}))
 app.use(parser.json())
 app.use(cors(corsOptions))
