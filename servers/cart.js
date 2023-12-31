@@ -10,17 +10,21 @@ cart_item_route.post('/add-item',async(req,res)=>
     try
     {
         const {product_id,quantity,buyer_id}=req.body
+        console.log(product_id,quantity)
         const checkProduct=await product_collection.findOne({_id:product_id})
         console.log(checkProduct)
         if(checkProduct)
         {
             const checkCart=await cart_item_collection.findOne({item:product_id})
             console.log(checkCart)
+            console.log(quantity<=checkProduct.quantity)
             if(checkCart)
             {
                 if(quantity<=(checkProduct.quantity-checkCart.quantity))
                 {
+
                     const updateCart=await cart_item_collection.findOneAndUpdate({item:product_id},{$inc:{quantity:quantity},$set:{total:(checkCart.total)+(quantity*checkProduct.price)}},{new:true})
+
                     return res.status(200).json({message:'item added to cart',cart_id:checkCart._id,price:updateCart.total})
                 }
                 else
@@ -30,7 +34,8 @@ cart_item_route.post('/add-item',async(req,res)=>
             }
             else if(quantity<=checkProduct.quantity)
             {
-                const addCart=await cart_item_collection.create({item:product_id,quantity:quantity,total:(quantity*checkProduct.price),buyer_id:buyer_id})
+                console.log('hey')
+                const addCart=await cart_item_collection.create({item:product_id,quantity:quantity,total:(quantity*checkProduct.price)})
                 console.log(addCart)
                 const checkCart=await cart_item_collection.findOne({item:product_id})
                 console.log(checkCart)
@@ -80,7 +85,7 @@ cart_route.post('/cart',async(req,res)=>
         const addCart=await cart_collection.create({items:items,total:bill,buyer:item[0].buyer_id})
         console.log(addCart)
       
-        return res.status(200).send('added to cart')
+        return res.status(200).json({total:addCart.total,cart_id:addCart._id})
     }
     catch(error)
     {

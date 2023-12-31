@@ -5,8 +5,8 @@ const mongoose=require('./connection')
 const cart_item_schema=new mongoose.Schema({
     item:{type:mongoose.Schema.Types.ObjectId,ref:'product'},
     quantity:{type:Number,required:true},
-    buyer_id:String,
-    total:{type:Number,required:true}
+    total:{type:Number,required:true},
+    buyer_id:{type:mongoose.Schema.Types.ObjectId,ref:'buyer'}
     
 })
 

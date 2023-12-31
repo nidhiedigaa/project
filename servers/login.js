@@ -28,7 +28,7 @@ login_route.post('/login',async(req,res)=>
                     if(checkPassword)
                     {
                         const secretToken=jwt.sign({email:email},process.env.SECRET_KEY,{expiresIn:'10m'})
-                        return res.status(200).json({message:'login successful',token:secretToken})
+                        return res.status(200).json({message:'login successful',token:secretToken,user_id:checkVerification._id})
                     }
                     else
                     {
@@ -53,6 +53,27 @@ login_route.post('/login',async(req,res)=>
     else
     {
         return res.status(400).json({message:'enter correct email or password'})
+    }
+})
+
+login_route.get('/get-user',async(req,res)=>
+{
+    const {user_id}=req.query
+    try
+    {
+        const checkUser=await user_collection.findOne({_id:user_id})
+        if(checkUser)
+        {
+            return res.status(200).json(checkUser)
+        }
+        else
+        {
+            return res.status(400).send('user not found')
+        }
+    }
+    catch(error)
+    {
+        return res.status(500).send('server error')
     }
 })
 

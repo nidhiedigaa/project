@@ -11,12 +11,15 @@ const {cart_item_route} =require('./cart')
 const {cart_route}=require('./cart')
 const address_route=require('./address')
 const order_route=require('./order')
+const help_route=require('./help')
+
+const category_route = require('./category')
 const app=express()
 
 
 
 
-const corsOptions={origin:'http://localhost:3000'}
+const corsOptions={origin:['http://localhost:3000','http://localhost:3001']}
 app.use(parser.urlencoded({extended:true}))
 app.use(parser.json())
 app.use(cors(corsOptions))
@@ -29,5 +32,7 @@ app.use(cart_item_route)
 app.use(cart_route)
 app.use(address_route)
 app.use(order_route)
+app.use(help_route)
+app.use(category_route)
 
 app.listen(process.env.PORT,()=>console.log(`server is running on ${process.env.PORT}`))

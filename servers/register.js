@@ -41,6 +41,7 @@ register_route.post('/register',async(req,res)=>
 {
     console.log('hello')
     const {name,email,password,role}=req.body
+    console.log(req.body)
     if(name && email && password && role)
     {
         const checkEmail=await user_collection.findOne({email:email})
