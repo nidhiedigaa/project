@@ -11,7 +11,7 @@ const user_schema=new mongoose.Schema({
     buyer:{type:mongoose.Schema.Types.ObjectId,ref:'buyer'},
     isVerified:{type:Boolean,default:false},
     token:{type:String,default:''},
-    address:[{type:mongoose.Schema.Types.ObjectId,ref:'address'}],
+    address:[{street:String,city:String,pincode:Number,state:String}],
     feedback:[{type:mongoose.Schema.Types.ObjectId,ref:'help'}]
 })
 

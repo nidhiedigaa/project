@@ -11,12 +11,17 @@ const order_route=express.Router()
 
 order_route.post('/order',async(req,res)=>
 {
-    const{cart_id,address_id,user_id,buyer_id}=req.body
-    if(cart_id && address_id && buyer_id && user_id)
+    const{cart_id,user_id,buyer_id,address}=req.body
+    console.log(req.body)
+    if(cart_id && buyer_id && user_id)
     {
         try
         {
             const getCart=await cart_collection.findOne({_id:cart_id})
+            if(!getCart)
+            {
+                return res.status(400).send('cart is empty')
+            }
             const findProduct=getCart.items
             let items=[]
             for(let i=0;i<findProduct.length;i++)
@@ -29,7 +34,7 @@ order_route.post('/order',async(req,res)=>
                 const checkProduct=await product_collection.findOne({_id:items[i].item})
                 const getProduct=await product_collection.updateOne({_id:items[i].item},{$set:{quantity:checkProduct.quantity-items[i].quantity}})
             }
-            const placeOrder=await order_collection.create({buyer:buyer_id,address:address_id,bill:getCart.total})
+            const placeOrder=await order_collection.create({buyer:buyer_id,bill:getCart.total})
             const checkCart=await cart_collection.findOne({_id:cart_id},{items:1})
             for(let i =0;i<=checkCart.length;i++)
             {
@@ -37,7 +42,7 @@ order_route.post('/order',async(req,res)=>
             }
             const updateCart=await cart_collection.deleteOne({_id:cart_id})
 
-            const buyerUpdate=await buyer_collection.updateOne({_id:user_id},{$push:{address:address_id,order:placeOrder._id}})
+            const buyerUpdate=await buyer_collection.updateOne({_id:user_id},{$push:{orders:placeOrder._id},$push:{address:address}})
             return res.status(200).send('order is placed')
         }
         catch(error)

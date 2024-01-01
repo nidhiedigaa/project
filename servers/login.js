@@ -28,7 +28,7 @@ login_route.post('/login',async(req,res)=>
                     if(checkPassword)
                     {
                         const secretToken=jwt.sign({email:email},process.env.SECRET_KEY,{expiresIn:'10m'})
-                        return res.status(200).json({message:'login successful',token:secretToken,user_id:checkVerification._id})
+                        return res.status(200).json({message:'login successful',token:secretToken,user_id:checkVerification._id,buyer_id:checkVerification.buyer})
                     }
                     else
                     {

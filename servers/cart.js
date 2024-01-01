@@ -82,9 +82,10 @@ cart_route.post('/cart',async(req,res)=>
        {
             return total+=ele.total
        },0)
+       console.log('bill',bill)
         const addCart=await cart_collection.create({items:items,total:bill,buyer:item[0].buyer_id})
         console.log(addCart)
-      
+      console.log('main cart')
         return res.status(200).json({total:addCart.total,cart_id:addCart._id})
     }
     catch(error)
