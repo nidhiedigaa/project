@@ -18,31 +18,38 @@ order_route.post('/order',async(req,res)=>
         try
         {
             const getCart=await cart_collection.findOne({_id:cart_id})
+            console.log(getCart+" cart items")
             if(!getCart)
             {
                 return res.status(400).send('cart is empty')
             }
             const findProduct=getCart.items
-            let items=[]
+            console.log(getCart.items)
+            let cartitems=[]
             for(let i=0;i<findProduct.length;i++)
             {
                 const getItem=await cart_item_collection.findOne({_id:findProduct[i]})
-                items.push(getItem)
+                cartitems.push(getItem)
             }
-            for(let i=0;i<items.length;i++)
+            console.log(cartitems)
+            for(let i=0;i<cartitems.length;i++)
             {
-                const checkProduct=await product_collection.findOne({_id:items[i].item})
-                const getProduct=await product_collection.updateOne({_id:items[i].item},{$set:{quantity:checkProduct.quantity-items[i].quantity}})
+                const checkProduct=await product_collection.findOne({_id:cartitems[i].item})
+                const getProduct=await product_collection.updateOne({_id:cartitems[i].item},{$set:{quantity:checkProduct.quantity-cartitems[i].quantity}})
             }
             const placeOrder=await order_collection.create({buyer:buyer_id,bill:getCart.total})
+            console.log(placeOrder)
             const checkCart=await cart_collection.findOne({_id:cart_id},{items:1})
-            for(let i =0;i<=checkCart.length;i++)
+            console.log(checkCart+' only items')
+            for(let i =0;i<checkCart.items.length;i++)
             {
-                const removeItems=await cart_item_collection.deleteOne({_id:checkCart[i]})
+                console.log('removing')
+                const removeItems=await cart_item_collection.deleteOne({_id:checkCart.items[i]})
+                console.log(removeItems)
             }
             const updateCart=await cart_collection.deleteOne({_id:cart_id})
-
-            const buyerUpdate=await buyer_collection.updateOne({_id:user_id},{$push:{orders:placeOrder._id},$push:{address:address}})
+            console.log(updateCart)
+            const buyerUpdate=await buyer_collection.updateOne({_id:user_id},{$push:{orders:placeOrder._id,address:address}})
             return res.status(200).send('order is placed')
         }
         catch(error)
