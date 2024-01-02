@@ -10,12 +10,13 @@ cart_item_route.post('/add-item',async(req,res)=>
     try
     {
         const {product_id,quantity,buyer_id}=req.body
+        console.log(req.body)
         console.log(product_id,quantity)
         const checkProduct=await product_collection.findOne({_id:product_id})
         console.log(checkProduct)
         if(checkProduct)
         {
-            const checkCart=await cart_item_collection.findOne({item:product_id})
+            const checkCart=await cart_item_collection.findOne({item:product_id,buyer_id:buyer_id})
             console.log(checkCart)
             console.log(quantity<=checkProduct.quantity)
             if(checkCart)
@@ -35,7 +36,7 @@ cart_item_route.post('/add-item',async(req,res)=>
             else if(quantity<=checkProduct.quantity)
             {
                 console.log('hey')
-                const addCart=await cart_item_collection.create({item:product_id,quantity:quantity,total:(quantity*checkProduct.price)})
+                const addCart=await cart_item_collection.create({item:product_id,quantity:quantity,total:(quantity*checkProduct.price),buyer_id:buyer_id})
                 console.log(addCart)
                 const checkCart=await cart_item_collection.findOne({item:product_id})
                 console.log(checkCart)

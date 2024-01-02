@@ -32,11 +32,14 @@ order_route.post('/order',async(req,res)=>
                 cartitems.push(getItem)
             }
             console.log(cartitems)
+            let product_id=[]
             for(let i=0;i<cartitems.length;i++)
             {
                 const checkProduct=await product_collection.findOne({_id:cartitems[i].item})
+                product_id.push({product:cartitems[i].item,quantity:cartitems[i].quantity})
                 const getProduct=await product_collection.updateOne({_id:cartitems[i].item},{$set:{quantity:checkProduct.quantity-cartitems[i].quantity}})
             }
+            console.log(product_id)
             const placeOrder=await order_collection.create({buyer:buyer_id,bill:getCart.total})
             console.log(placeOrder)
             const checkCart=await cart_collection.findOne({_id:cart_id},{items:1})
@@ -49,8 +52,8 @@ order_route.post('/order',async(req,res)=>
             }
             const updateCart=await cart_collection.deleteOne({_id:cart_id})
             console.log(updateCart)
-            const buyerUpdate=await buyer_collection.updateOne({_id:user_id},{$push:{orders:placeOrder._id,address:address}})
-            return res.status(200).send('order is placed')
+            const buyerUpdate=await buyer_collection.updateOne({_id:buyer_id},{$push:{orders:placeOrder._id,address:address}})
+            return res.status(200).json({message:'order placed',products:product_id})
         }
         catch(error)
         {
